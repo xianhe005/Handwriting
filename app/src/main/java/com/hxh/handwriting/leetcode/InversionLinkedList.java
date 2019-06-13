@@ -58,6 +58,10 @@ public class InversionLinkedList {
             this.first = null;
         }
 
+        public LinkList(Node first) {
+            this.first = first;
+        }
+
         // 插入一个头节点
         public void addFirstNode(int data) {
             Node node = new Node(data);
