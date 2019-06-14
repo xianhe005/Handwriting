@@ -18,22 +18,25 @@ public class SwapPairs {
     }
 
     private static void swapPairs(InversionLinkedList.LinkList linkList) {
-        InversionLinkedList.Node n1 = linkList.first;
-        if (n1 == null) {
+        InversionLinkedList.Node n = linkList.first;
+        if (n == null) {
             return;
         }
-        InversionLinkedList.Node n2 = n1.next;
-        if (n2 == null) {
+        if (n.next == null) {
             return;
         }
+        linkList.first = n.next;
+        InversionLinkedList.Node pre = null;
+        while (n.next != null) {
+            InversionLinkedList.Node next = n.next;
+            n.next = next.next;
+            next.next = n;
+            if (pre != null) {
+                pre.next = next;
+            }
 
-        // TODO: 2019/6/13 未完
-        while (n2.next != null) {
-            n1.next = n2.next;
-            n2.next = n1;
-
-            n1 = n2;
-            n2 = n2.next;
+            pre = n;
+            n = n.next;
         }
     }
 }

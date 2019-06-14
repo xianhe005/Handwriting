@@ -4,8 +4,10 @@ import com.hxh.handwriting.leetcode.InversionLinkedList;
 import com.hxh.handwriting.leetcode.MergeKList;
 import com.hxh.handwriting.leetcode.MergeTwoSortedList;
 import com.hxh.handwriting.leetcode.ParityLinkedList;
+import com.hxh.handwriting.leetcode.PartitionLinkedList;
 import com.hxh.handwriting.leetcode.RemoveLinkedListVal;
 import com.hxh.handwriting.leetcode.RemoveNthFromEnd;
+import com.hxh.handwriting.leetcode.ReverseBetween;
 import com.hxh.handwriting.leetcode.Sort;
 import com.hxh.handwriting.leetcode.SwapPairs;
 
@@ -57,6 +59,16 @@ public class ExampleUnitTest {
     @Test
     public void swapPairs() {
         SwapPairs.test();
+    }
+
+    @Test
+    public void partitionLinkedList() {
+        PartitionLinkedList.test();
+    }
+
+    @Test
+    public void reverseBetween() {
+        ReverseBetween.test();
     }
 
     @Test
