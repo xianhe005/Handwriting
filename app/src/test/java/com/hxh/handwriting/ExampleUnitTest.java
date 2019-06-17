@@ -1,6 +1,7 @@
 package com.hxh.handwriting;
 
 import com.hxh.handwriting.leetcode.AddTwoNumbers;
+import com.hxh.handwriting.leetcode.BracketsValid;
 import com.hxh.handwriting.leetcode.InversionLinkedList;
 import com.hxh.handwriting.leetcode.IsPalindrome;
 import com.hxh.handwriting.leetcode.LengthOfLongestSubstring;
@@ -8,11 +9,14 @@ import com.hxh.handwriting.leetcode.MergeKList;
 import com.hxh.handwriting.leetcode.MergeTwoSortedList;
 import com.hxh.handwriting.leetcode.ParityLinkedList;
 import com.hxh.handwriting.leetcode.PartitionLinkedList;
+import com.hxh.handwriting.leetcode.PlusOne;
+import com.hxh.handwriting.leetcode.RemoveDuplicates;
 import com.hxh.handwriting.leetcode.RemoveLinkedListVal;
 import com.hxh.handwriting.leetcode.RemoveNthFromEnd;
 import com.hxh.handwriting.leetcode.ReverseBetween;
 import com.hxh.handwriting.leetcode.Sort;
 import com.hxh.handwriting.leetcode.SwapPairs;
+import com.hxh.handwriting.leetcode.ThreeSum;
 import com.hxh.handwriting.leetcode.TwoSum;
 
 import org.junit.Test;
@@ -93,6 +97,27 @@ public class ExampleUnitTest {
     @Test
     public void isPalindrome() {
         IsPalindrome.test();
+    }
+
+    @Test
+    public void threeSum() {
+        ThreeSum.test();
+    }
+
+    @Test
+    public void bracketsValid() {
+        BracketsValid.test();
+    }
+
+    @Test
+    public void removeDuplicates() {
+        RemoveDuplicates.test();
+    }
+
+
+    @Test
+    public void plusOne() {
+        PlusOne.test();
     }
 
     @Test
