@@ -1,13 +1,16 @@
 package com.hxh.handwriting;
 
 import com.hxh.handwriting.leetcode.AddTwoNumbers;
+import com.hxh.handwriting.leetcode.AllPalindroom;
 import com.hxh.handwriting.leetcode.BalancedNodeTree;
 import com.hxh.handwriting.leetcode.BracketsValid;
+import com.hxh.handwriting.leetcode.CopyRandomListNode;
 import com.hxh.handwriting.leetcode.InorderTraversal;
 import com.hxh.handwriting.leetcode.InversionLinkedList;
 import com.hxh.handwriting.leetcode.IsPalindrome;
 import com.hxh.handwriting.leetcode.IsPalindromeStr;
 import com.hxh.handwriting.leetcode.IsSymmetric;
+import com.hxh.handwriting.leetcode.LRUCache;
 import com.hxh.handwriting.leetcode.LengthOfLongestSubstring;
 import com.hxh.handwriting.leetcode.LevelOrder;
 import com.hxh.handwriting.leetcode.LevelOrderBottom;
@@ -17,15 +20,19 @@ import com.hxh.handwriting.leetcode.MergeTwoSortedList;
 import com.hxh.handwriting.leetcode.ParityLinkedList;
 import com.hxh.handwriting.leetcode.PartitionLinkedList;
 import com.hxh.handwriting.leetcode.PlusOne;
+import com.hxh.handwriting.leetcode.PostorderTraversal;
+import com.hxh.handwriting.leetcode.PreorderTraversal;
 import com.hxh.handwriting.leetcode.RemoveDuplicates;
 import com.hxh.handwriting.leetcode.RemoveLinkedListVal;
 import com.hxh.handwriting.leetcode.RemoveNthFromEnd;
 import com.hxh.handwriting.leetcode.ReverseBetween;
+import com.hxh.handwriting.leetcode.SingleNumber;
 import com.hxh.handwriting.leetcode.Sort;
 import com.hxh.handwriting.leetcode.SortColor;
 import com.hxh.handwriting.leetcode.SwapPairs;
 import com.hxh.handwriting.leetcode.ThreeSum;
 import com.hxh.handwriting.leetcode.TwoSum;
+import com.hxh.handwriting.leetcode.WordBreak;
 import com.hxh.handwriting.leetcode.YangHuiTriangle;
 import com.hxh.handwriting.leetcode.YangHuiTriangle2;
 import com.hxh.handwriting.leetcode.ZigzagLevelOrder;
@@ -188,5 +195,40 @@ public class ExampleUnitTest {
     @Test
     public void sortTest() {
         Sort.test();
+    }
+
+    @Test
+    public void allPalindroom() {
+        AllPalindroom.test();
+    }
+
+    @Test
+    public void singleNumber() {
+        SingleNumber.test();
+    }
+
+    @Test
+    public void copyRandomListNode() {
+        CopyRandomListNode.test();
+    }
+
+    @Test
+    public void wordBreak() {
+        WordBreak.test();
+    }
+
+    @Test
+    public void preorderTraversal() {
+        PreorderTraversal.test();
+    }
+
+    @Test
+    public void postorderTraversal() {
+        PostorderTraversal.test();
+    }
+
+    @Test
+    public void LRUCache() {
+        LRUCache.test();
     }
 }
