@@ -1,10 +1,17 @@
 package com.hxh.handwriting;
 
 import com.hxh.handwriting.leetcode.AddTwoNumbers;
+import com.hxh.handwriting.leetcode.BalancedNodeTree;
 import com.hxh.handwriting.leetcode.BracketsValid;
+import com.hxh.handwriting.leetcode.InorderTraversal;
 import com.hxh.handwriting.leetcode.InversionLinkedList;
 import com.hxh.handwriting.leetcode.IsPalindrome;
+import com.hxh.handwriting.leetcode.IsPalindromeStr;
+import com.hxh.handwriting.leetcode.IsSymmetric;
 import com.hxh.handwriting.leetcode.LengthOfLongestSubstring;
+import com.hxh.handwriting.leetcode.LevelOrder;
+import com.hxh.handwriting.leetcode.LevelOrderBottom;
+import com.hxh.handwriting.leetcode.MaxProfit;
 import com.hxh.handwriting.leetcode.MergeKList;
 import com.hxh.handwriting.leetcode.MergeTwoSortedList;
 import com.hxh.handwriting.leetcode.ParityLinkedList;
@@ -15,9 +22,13 @@ import com.hxh.handwriting.leetcode.RemoveLinkedListVal;
 import com.hxh.handwriting.leetcode.RemoveNthFromEnd;
 import com.hxh.handwriting.leetcode.ReverseBetween;
 import com.hxh.handwriting.leetcode.Sort;
+import com.hxh.handwriting.leetcode.SortColor;
 import com.hxh.handwriting.leetcode.SwapPairs;
 import com.hxh.handwriting.leetcode.ThreeSum;
 import com.hxh.handwriting.leetcode.TwoSum;
+import com.hxh.handwriting.leetcode.YangHuiTriangle;
+import com.hxh.handwriting.leetcode.YangHuiTriangle2;
+import com.hxh.handwriting.leetcode.ZigzagLevelOrder;
 
 import org.junit.Test;
 
@@ -114,10 +125,64 @@ public class ExampleUnitTest {
         RemoveDuplicates.test();
     }
 
-
     @Test
     public void plusOne() {
         PlusOne.test();
+    }
+
+    @Test
+    public void sortColor() {
+        SortColor.test();
+    }
+
+    @Test
+    public void inorderTraversal() {
+        InorderTraversal.test();
+    }
+
+    @Test
+    public void isSymmetric() {
+        IsSymmetric.test();
+    }
+
+    @Test
+    public void levelOrder() {
+        LevelOrder.test();
+    }
+
+    @Test
+    public void zigzagLevelOrder() {
+        ZigzagLevelOrder.test();
+    }
+
+    @Test
+    public void levelOrderBottom() {
+        LevelOrderBottom.test();
+    }
+
+    @Test
+    public void yangHuiTriangle() {
+        YangHuiTriangle.test();
+    }
+
+    @Test
+    public void yangHuiTriangle2() {
+        YangHuiTriangle2.test();
+    }
+
+    @Test
+    public void balancedNodeTree() {
+        BalancedNodeTree.test();
+    }
+
+    @Test
+    public void maxProfit() {
+        MaxProfit.test();
+    }
+
+    @Test
+    public void isPalindromeStr() {
+        IsPalindromeStr.test();
     }
 
     @Test
