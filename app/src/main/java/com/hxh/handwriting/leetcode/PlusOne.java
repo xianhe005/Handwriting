@@ -1,5 +1,7 @@
 package com.hxh.handwriting.leetcode;
 
+import java.util.Arrays;
+
 /**
  * Created by HXH at 2019/6/17
  * LeetCode 第 66 号问题：加一
@@ -7,35 +9,11 @@ package com.hxh.handwriting.leetcode;
 public class PlusOne {
 
     public static void test() {
-        int[] result = plusOne(new int[]{1, 2, 3});
-        for (int i : result) {
-            System.out.print(i + ",");
-        }
-        System.out.println();
-
-        result = plusOne(new int[]{4,3,2,1});
-        for (int i : result) {
-            System.out.print(i + ",");
-        }
-        System.out.println();
-
-        result = plusOne(new int[]{8,9});
-        for (int i : result) {
-            System.out.print(i + ",");
-        }
-        System.out.println();
-
-        result = plusOne(new int[]{9,9});
-        for (int i : result) {
-            System.out.print(i + ",");
-        }
-        System.out.println();
-
-        result = plusOne(new int[]{9,9,9,9,9});
-        for (int i : result) {
-            System.out.print(i + ",");
-        }
-        System.out.println();
+        System.out.println(Arrays.toString(plusOne(new int[]{1, 2, 3})));
+        System.out.println(Arrays.toString(plusOne(new int[]{4, 3, 2, 1})));
+        System.out.println(Arrays.toString(plusOne(new int[]{8, 9})));
+        System.out.println(Arrays.toString(plusOne(new int[]{9, 9})));
+        System.out.println(Arrays.toString(plusOne(new int[]{9, 9, 9, 9, 9})));
     }
 
     private static int[] plusOne(int[] array) {

@@ -1,5 +1,7 @@
 package com.hxh.handwriting.leetcode;
 
+import java.util.Arrays;
+
 /**
  * Created by HXH at 2019/6/18
  * LeetCode 第 75 号问题：颜色分类
@@ -9,18 +11,11 @@ public class SortColor {
     public static void test() {
         int[] nums = {2, 0, 2, 1, 1, 0};
         sortColors(nums);
-        for (int num : nums) {
-            System.out.print(num + ",");
-        }
-        System.out.println();
-
+        System.out.println(Arrays.toString(nums));
         System.out.println("===========================");
         nums = new int[]{2, 0, 2, 1, 1, 0};
         sortColors2(nums);
-        for (int num : nums) {
-            System.out.print(num + ",");
-        }
-        System.out.println();
+        System.out.println(Arrays.toString(nums));
     }
 
     // 三路快速排序的思想

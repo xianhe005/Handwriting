@@ -4,34 +4,45 @@ import com.hxh.handwriting.leetcode.AddTwoNumbers;
 import com.hxh.handwriting.leetcode.AllPalindroom;
 import com.hxh.handwriting.leetcode.BalancedNodeTree;
 import com.hxh.handwriting.leetcode.BracketsValid;
+import com.hxh.handwriting.leetcode.ContainsNearbyDuplicate;
 import com.hxh.handwriting.leetcode.CopyRandomListNode;
+import com.hxh.handwriting.leetcode.DeleteNode;
+import com.hxh.handwriting.leetcode.EvalRPN;
+import com.hxh.handwriting.leetcode.HammingWeight;
 import com.hxh.handwriting.leetcode.InorderTraversal;
 import com.hxh.handwriting.leetcode.InversionLinkedList;
 import com.hxh.handwriting.leetcode.IsPalindrome;
 import com.hxh.handwriting.leetcode.IsPalindromeStr;
+import com.hxh.handwriting.leetcode.IsPowerOfTwo;
 import com.hxh.handwriting.leetcode.IsSymmetric;
 import com.hxh.handwriting.leetcode.LRUCache;
 import com.hxh.handwriting.leetcode.LengthOfLongestSubstring;
 import com.hxh.handwriting.leetcode.LevelOrder;
 import com.hxh.handwriting.leetcode.LevelOrderBottom;
 import com.hxh.handwriting.leetcode.MaxProfit;
+import com.hxh.handwriting.leetcode.MaxSlidingWindow;
 import com.hxh.handwriting.leetcode.MergeKList;
 import com.hxh.handwriting.leetcode.MergeTwoSortedList;
+import com.hxh.handwriting.leetcode.MinSubArrayLen;
 import com.hxh.handwriting.leetcode.ParityLinkedList;
 import com.hxh.handwriting.leetcode.PartitionLinkedList;
 import com.hxh.handwriting.leetcode.PlusOne;
 import com.hxh.handwriting.leetcode.PostorderTraversal;
 import com.hxh.handwriting.leetcode.PreorderTraversal;
+import com.hxh.handwriting.leetcode.RangeBitwiseAnd;
 import com.hxh.handwriting.leetcode.RemoveDuplicates;
 import com.hxh.handwriting.leetcode.RemoveLinkedListVal;
 import com.hxh.handwriting.leetcode.RemoveNthFromEnd;
 import com.hxh.handwriting.leetcode.ReverseBetween;
+import com.hxh.handwriting.leetcode.RightSideView;
 import com.hxh.handwriting.leetcode.SingleNumber;
 import com.hxh.handwriting.leetcode.Sort;
 import com.hxh.handwriting.leetcode.SortColor;
 import com.hxh.handwriting.leetcode.SwapPairs;
 import com.hxh.handwriting.leetcode.ThreeSum;
+import com.hxh.handwriting.leetcode.TrailingZeroes;
 import com.hxh.handwriting.leetcode.TwoSum;
+import com.hxh.handwriting.leetcode.TwoSum2;
 import com.hxh.handwriting.leetcode.WordBreak;
 import com.hxh.handwriting.leetcode.YangHuiTriangle;
 import com.hxh.handwriting.leetcode.YangHuiTriangle2;
@@ -230,5 +241,60 @@ public class ExampleUnitTest {
     @Test
     public void LRUCache() {
         LRUCache.test();
+    }
+
+    @Test
+    public void evalRPN() {
+        EvalRPN.test();
+    }
+
+    @Test
+    public void twoSum2() {
+        TwoSum2.test();
+    }
+
+    @Test
+    public void trailingZeroes() {
+        TrailingZeroes.test();
+    }
+
+    @Test
+    public void hammingWeight() {
+        HammingWeight.test();
+    }
+
+    @Test
+    public void rightSideView() {
+        RightSideView.test();
+    }
+
+    @Test
+    public void rangeBitwiseAnd() {
+        RangeBitwiseAnd.test();
+    }
+
+    @Test
+    public void minSubArrayLen() {
+        MinSubArrayLen.test();
+    }
+
+    @Test
+    public void containsNearbyDuplicate() {
+        ContainsNearbyDuplicate.test();
+    }
+
+    @Test
+    public void isPowerOfTwo() {
+        IsPowerOfTwo.test();
+    }
+
+    @Test
+    public void deleteNode() {
+        DeleteNode.test();
+    }
+
+    @Test
+    public void maxSlidingWindow() {
+        MaxSlidingWindow.test();
     }
 }
