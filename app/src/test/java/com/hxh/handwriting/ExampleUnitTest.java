@@ -24,6 +24,7 @@ import com.hxh.handwriting.leetcode.MaxSlidingWindow;
 import com.hxh.handwriting.leetcode.MergeKList;
 import com.hxh.handwriting.leetcode.MergeTwoSortedList;
 import com.hxh.handwriting.leetcode.MinSubArrayLen;
+import com.hxh.handwriting.leetcode.MissingNumber;
 import com.hxh.handwriting.leetcode.ParityLinkedList;
 import com.hxh.handwriting.leetcode.PartitionLinkedList;
 import com.hxh.handwriting.leetcode.PlusOne;
@@ -296,5 +297,10 @@ public class ExampleUnitTest {
     @Test
     public void maxSlidingWindow() {
         MaxSlidingWindow.test();
+    }
+
+    @Test
+    public void missingNumber() {
+        MissingNumber.test();
     }
 }
