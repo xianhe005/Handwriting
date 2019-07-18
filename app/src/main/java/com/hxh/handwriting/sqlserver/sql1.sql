@@ -398,3 +398,168 @@ select a.col, row_number() over (order by a.col desc) as [rank], count(1) over()
 --16	3	4
 --144	4	4
 select cast(CEILING(100 / 3.0) as int) as totalPage --总页数
+
+-----------定义数据表、不等于[x]条件的写法(ISNULL)
+begin
+	declare @t TABLE(col VARCHAR(50))
+	insert @t(col) VALUES ('a')
+	insert @t(col) VALUES ('b')
+	insert @t(col) VALUES (null)
+	insert @t(col) VALUES ('c')
+	select * from @t
+	select * from @t AS b where b.col is null
+	select * from @t AS b where b.col <> 'a' --不等于'a'的错误写法
+	select * from @t AS b where ISNULL(b.col, '') <> 'a' --不等于'a'的正确写法,只要ISNULL第二个参数不等于'a'即可
+end
+--result
+--col
+--a
+--b
+--NULL
+--c
+-------
+--col
+--NULL
+-------
+--col
+--b
+--c
+-------
+--col
+--b
+--NULL
+--c
+------------
+begin
+	declare @t2 TABLE(col BIGINT)
+	insert @t2(col) VALUES (1)
+	insert @t2(col) VALUES (3)
+	insert @t2(col) VALUES (null)
+	insert @t2(col) VALUES (2)
+	select * from @t2
+	select * from @t2 AS b where b.col is null
+	select * from @t2 AS b where b.col <> 3 --不等于3的错误写法
+	select * from @t2 AS b where ISNULL(b.col, 0) <> 3 --不等于3的正确写法,只要ISNULL第二个参数不等于3即可
+end
+--result
+--col
+--1
+--3
+--NULL
+--2
+--------
+--col
+--NULL
+--------
+--col
+--1
+--2
+--------
+--col
+--1
+--NULL
+--2
+
+------------------NOT与ISNULL组合的正确用法
+select * from dbo.f_split('a,b,c,d', ',') a
+--result
+--col
+--a
+--b
+--c
+--d
+select * from (select * from dbo.f_split('a,b,c,d', ',')) a WHERE a.col = 'a' OR a.col = 'c'
+--result
+--col
+--a
+--c
+select * from (select * from dbo.f_split('a,b,c,d', ',')) a WHERE NOT (a.col = 'a' OR a.col = 'c')
+--result
+--col
+--b
+--d
+
+begin
+	declare @t3 TABLE(col VARCHAR(50))
+	insert @t3(col) VALUES ('a')
+	insert @t3(col) VALUES ('b')
+	insert @t3(col) VALUES (null)
+	insert @t3(col) VALUES ('c')
+	insert @t3(col) VALUES ('d')
+	select * from @t3
+	select * from @t3 AS b where ISNULL(b.col, '') <> 'a' and ISNULL(b.col, '') <> 'c'
+	select * from @t3 AS b where not (ISNULL(b.col, '') <> 'a' and ISNULL(b.col, '') <> 'c')
+	select * from @t3 AS b where not not (ISNULL(b.col, '') <> 'a' and ISNULL(b.col, '') <> 'c')
+	select * from @t3 AS b where not b.col = 'a' --这里取反NULL被丢失了,有问题
+	select * from @t3 AS b where not ISNULL(b.col, '') = 'a' --这样处理才对
+end
+--result
+--col
+--a
+--b
+--NULL
+--c
+--d
+---------
+--col
+--b
+--NULL
+--d
+---------
+--col
+--a
+--c
+---------
+--col
+--b
+--NULL
+--d
+---------
+--col
+--b
+--c
+--d
+---------
+--col
+--b
+--NULL
+--c
+--d
+
+--------------------IDENTITY(1,1) PRIMARY KEY、ROW_NUMBER() OVER (PARTITION BY [x] ORDER BY(分组排序生成分组内行号)
+begin
+	declare @t4 TABLE(ID INT IDENTITY(1,1) PRIMARY KEY, name VARCHAR(50), [date] DATETIME)
+	insert @t4 (name, [date]) VALUES ('c', CAST('2019-01-01 10:00' AS DATETIME))
+	insert @t4 (name, [date]) VALUES ('b', CAST('2019-01-01 12:00' AS DATETIME))
+	insert @t4 (name, [date]) VALUES ('a', CAST('2019-01-01 11:00' AS DATETIME))
+	insert @t4 (name, [date]) VALUES ('c', CAST('2019-01-01 13:10' AS DATETIME))
+	insert @t4 (name, [date]) VALUES ('b', CAST('2019-01-01 09:00' AS DATETIME))
+	select * from @t4
+
+	select b.ID, row_number() over (partition by b.name order by [date] DESC) as num, b.name, b.[date]
+		from @t4 AS b
+
+	select * from (select b.ID, row_number() over (partition by b.name order by [date] DESC) as num, b.name, b.[date]
+		FROM @t4 as b) AS c
+	where c.num = 1
+	order by name desc
+end
+--result
+--ID	name	date
+--1	c	2019-01-01 10:00:00.000
+--2	b	2019-01-01 12:00:00.000
+--3	a	2019-01-01 11:00:00.000
+--4	c	2019-01-01 13:10:00.000
+--5	b	2019-01-01 09:00:00.000
+------------
+--ID	num	name	date
+--3	1	a	2019-01-01 11:00:00.000
+--2	1	b	2019-01-01 12:00:00.000
+--5	2	b	2019-01-01 09:00:00.000
+--4	1	c	2019-01-01 13:10:00.000
+--1	2	c	2019-01-01 10:00:00.000
+------------
+--ID	num	name	date
+--4	1	c	2019-01-01 13:10:00.000
+--2	1	b	2019-01-01 12:00:00.000
+--3	1	a	2019-01-01 11:00:00.000
