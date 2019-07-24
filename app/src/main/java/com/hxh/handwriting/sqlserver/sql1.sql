@@ -563,3 +563,76 @@ end
 --4	1	c	2019-01-01 13:10:00.000
 --2	1	b	2019-01-01 12:00:00.000
 --3	1	a	2019-01-01 11:00:00.000
+
+-----------------子查询 ORDER BY
+begin
+	declare @t4 TABLE(ID INT IDENTITY(1,1) PRIMARY KEY, name VARCHAR(50), [date] DATETIME)
+	insert @t4 (name, [date]) VALUES ('c', CAST('2019-01-01 10:00' AS DATETIME))
+	insert @t4 (name, [date]) VALUES ('b', CAST('2019-01-01 12:00' AS DATETIME))
+	insert @t4 (name, [date]) VALUES ('a', CAST('2019-01-01 11:00' AS DATETIME))
+	insert @t4 (name, [date]) VALUES ('c', CAST('2019-01-01 13:10' AS DATETIME))
+	insert @t4 (name, [date]) VALUES ('b', CAST('2019-01-01 09:00' AS DATETIME))
+	select * from @t4
+
+	declare @t5 TABLE(ID INT IDENTITY(1,1) PRIMARY KEY, TName VARCHAR(50), [date] DATETIME)
+	insert @t5 (TName, [date]) VALUES ('a', CAST('2019-01-01 11:00' AS DATETIME))
+	insert @t5 (TName, [date]) VALUES ('b', CAST('2019-01-01 12:00' AS DATETIME))
+	insert @t5 (TName, [date]) VALUES ('c', CAST('2019-01-01 13:00' AS DATETIME))
+	insert @t5 (TName, [date]) VALUES ('d', CAST('2019-01-01 14:00' AS DATETIME))
+	insert @t5 (TName, [date]) VALUES ('e', CAST('2019-01-01 15:00' AS DATETIME))
+	select * from @t5
+
+	select TOP(5) b.name from @t4 AS b order by b.name
+
+	--TOP(N)的形式
+	select TOP(select count(*) from @t4) b.name FROM @t4 AS b order by b.name
+
+	--下面报如下错误
+	--除非另外还指定了 TOP 或 FOR XML，否则，ORDER BY 子句在视图、内联函数、派生表、子查询和公用表表达式中无效。
+	--SELECT * FROM @t5 AS a WHERE a.TName IN (
+	--	SELECT b.name FROM @t4 AS b ORDER BY b.name
+	--)
+
+	--TOP(N)的形式来解决上面ORDER BY子查询问题
+	select * from @t5 AS a where a.TName in (
+		select TOP(select count(*) from @t4) b.name FROM @t4 AS b order by b.name
+	)
+end
+--result
+--ID	name	date
+--1	c	2019-01-01 10:00:00.000
+--2	b	2019-01-01 12:00:00.000
+--3	a	2019-01-01 11:00:00.000
+--4	c	2019-01-01 13:10:00.000
+--5	b	2019-01-01 09:00:00.000
+--------
+--ID	TName	date
+--1	a	2019-01-01 11:00:00.000
+--2	b	2019-01-01 12:00:00.000
+--3	c	2019-01-01 13:00:00.000
+--4	d	2019-01-01 14:00:00.000
+--5	e	2019-01-01 15:00:00.000
+--------
+--name
+--a
+--b
+--b
+--c
+--c
+--------
+--name
+--a
+--b
+--b
+--c
+--c
+--------
+--ID	TName	date
+--1	a	2019-01-01 11:00:00.000
+--2	b	2019-01-01 12:00:00.000
+--3	c	2019-01-01 13:00:00.000
+
+-----------------------查询表结构信息
+SELECT * FROM information_schema.columns WHERE table_name='t_Shift'
+
+--
