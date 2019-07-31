@@ -633,6 +633,147 @@ end
 --3	c	2019-01-01 13:00:00.000
 
 -----------------------查询表结构信息
-SELECT * FROM information_schema.columns WHERE table_name='t_Shift'
+select * from information_schema.columns where table_name='t_Shift'
 
---
+-----------------------FUNCTION
+USE [GYLTC]
+GO
+/****** Object:  UserDefinedFunction [dbo].[f_split_GetDefect]    Script Date: 2019/7/25 14:24:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+------------------------------
+--函数：拆分检测缺陷类型
+--创建人XXX
+--创建时间：2019-04-22
+
+
+alter function [dbo].[f_split_GetDefect]
+    (
+      @SourceSql NVARCHAR(MAX)
+    )
+RETURNS table
+AS
+
+     return          select   ( select TOP 1
+                    col
+          from      f_split(t.col, ' ')
+        ) as DefectLocation  ,
+        ( select TOP 1
+                    col
+          FROM      (select * from f_split(t.col, ' ') c where c.col!='' ) as d
+          WHERE     col NOT IN ( select TOP 1
+                                        col
+                                 FROM   f_split(t.col, ' ')  )
+        ) AS DefectCause
+FROM    ( select    *
+          from      f_split(@SourceSql, ',')
+        ) AS t
+WHERE   t.col != ''
+----------------------------上面为表值函数
+
+----------------------------下面为分析
+--f_split(@SourceSql, ',')分解：
+--a et v
+--b d
+--c f
+declare @SourceSql NVARCHAR(MAX) = 'a et v,b d,c f'
+select * from f_split(@SourceSql, ',')
+select   ( select TOP 1
+                    col
+          from      f_split(t.col, ' ')
+        ) as DefectLocation  ,
+        ( select TOP 1
+                    col
+          from      (select * from f_split(t.col, ' ') c where c.col!='' ) as d
+          WHERE     col NOT IN ( select TOP 1
+                                        col
+                                 from   f_split(t.col, ' ')  )
+        ) AS DefectCause,
+		(select TOP 1 col from   f_split(t.col, ' ')) AS TEST1,
+		t.col AS TEST2
+FROM    ( select    *
+          from      f_split(@SourceSql, ',')
+        ) AS t
+WHERE   t.col != ''
+--最终结果
+--DefectLocation	DefectCause	TEST1	TEST2
+--a	et	a	a et v
+--b	d	b	b d
+--c	f	c	c f
+
+--------------------SUM GROUP BY(例子：统计教师星期几的上课节数)
+begin
+	declare @t TABLE(tn INT, wn INT)
+	insert @t (tn, wn) VALUES (1, 2)
+	insert @t (tn, wn) VALUES (1, 3)
+	insert @t (tn, wn) VALUES (2, 1)
+	insert @t (tn, wn) VALUES (3, 2)
+	insert @t (tn, wn) VALUES (1, 2)
+
+	select * from @t
+
+	select t.tn '教师号',t.wn '星期号', ('有') '是否有课' from (select * from @t) t
+
+	select t.tn,
+		case when t.wn=1 then 1 else 0 end as 星期一,
+		case when t.wn=2 then 1 else 0 end as 星期二,
+		case when t.wn=3 then 1 else 0 end as 星期三
+		from @t t
+
+	select s.tn as 教师号 ,sum(s.星期一) as 星期一,sum(s.星期二) as 星期二,sum(s.星期三) as 星期三
+		from (select t.tn,
+			case when t.wn=1 then 1 else 0 end as 星期一,
+			case when t.wn=2 then 1 else 0 end as 星期二,
+			case when t.wn=3 then 1 else 0 end as 星期三
+			from @t t
+		) s
+	group by s.tn
+
+	select k.教师号,
+		case when k.星期一>0 then cast(k.星期一 as varchar) else '' end as 星期一 ,
+		case when k.星期二>0 then cast(k.星期二 as varchar) else '' end as 星期二 ,
+		case when k.星期三>0 then cast(k.星期三 as varchar) else '' end as 星期三
+	from (
+		select s.tn as 教师号 ,sum(s.星期一) as 星期一,sum(s.星期二) as 星期二,sum(s.星期三) as 星期三
+			from (select t.tn,
+				case when t.wn=1 then 1 else 0 end as 星期一,
+				case when t.wn=2 then 1 else 0 end as 星期二,
+				case when t.wn=3 then 1 else 0 end as 星期三
+				from @t t
+			) s
+		group by s.tn
+	) k order by k.教师号
+end
+--result
+--tn	wn
+--1	    2
+--1	    3
+--2	    1
+--3	    2
+--1	    2
+----------
+--教师号	星期号	是否有课
+--1	    2	    有
+--1	    3	    有
+--2	    1	    有
+--3	    2	    有
+--1	    2	    有
+----------
+--tn	星期一	星期二	星期三
+--1	    0	    1	    0
+--1	    0	    0	    1
+--2	    1	    0	    0
+--3	    0	    1	    0
+--1	    0	    1	    0
+----------
+--教师号	星期一	星期二	星期三
+--1	    0	    2	    1
+--2	    1	    0	    0
+--3	    0	    1	    0
+----------
+--教师号	星期一	星期二	星期三
+--1	    	    2	    1
+--2	    1
+--3		        1
