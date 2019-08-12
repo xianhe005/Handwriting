@@ -399,6 +399,32 @@ select a.col, row_number() over (order by a.col desc) as [rank], count(1) over()
 --144	4	4
 select cast(CEILING(100 / 3.0) as int) as totalPage --总页数
 
+--分页举例，使用count(1) over()获取总记录数量
+BEGIN
+	DECLARE @t TABLE(name VARCHAR(MAX), age INT)
+	INSERT @t VALUES('a0', 20)
+	INSERT @t VALUES('a1', 10)
+	INSERT @t VALUES('a2', 30)
+	INSERT @t VALUES('a3', 50)
+	INSERT @t VALUES('a4', 40)
+
+	SELECT * FROM @t
+
+	SELECT *, ROW_NUMBER() OVER(ORDER BY age) AS [rank], COUNT(1) OVER() AS totalCount FROM @t
+
+	DECLARE @curPage INT = 2 --当前页
+	DECLARE @pageCount INT = 3 --每页数量
+	SELECT * ,
+	CAST(CEILING(t.totalCount / CAST(@pageCount AS FLOAT)) AS INT) AS totalPage --总页数
+	--,CASE WHEN @curPage * @pageCount > t.totalCount THEN t.totalCount ELSE @curPage * @pageCount END AS test
+	FROM (
+		SELECT *, ROW_NUMBER() OVER(ORDER BY age) AS [rank], COUNT(1) OVER() AS totalCount --总条数
+		FROM @t
+	) AS t
+	WHERE t.[rank] BETWEEN ((@curPage - 1) * @pageCount + 1) AND
+		CASE WHEN @curPage * @pageCount > t.totalCount THEN t.totalCount ELSE @curPage * @pageCount END
+END
+
 -----------定义数据表、不等于[x]条件的写法(ISNULL)
 begin
 	declare @t TABLE(col VARCHAR(50))
