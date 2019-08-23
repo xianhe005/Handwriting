@@ -67,6 +67,9 @@ public class MultiThreadHelper<T> {
                         && tMultiThreadHelper.reListener == null) {
                     try {
                         tMultiThreadHelper.wait();
+                        if (!tMultiThreadHelper.isAlive) {
+                            return;
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -90,6 +93,7 @@ public class MultiThreadHelper<T> {
      */
     public synchronized void stopOff() {
         isAlive = false;
+        notifyAll();
     }
 
     /**
