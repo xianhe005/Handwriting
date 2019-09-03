@@ -400,30 +400,30 @@ select a.col, row_number() over (order by a.col desc) as [rank], count(1) over()
 select cast(CEILING(100 / 3.0) as int) as totalPage --总页数
 
 --分页举例，使用count(1) over()获取总记录数量
-BEGIN
-	DECLARE @t TABLE(name VARCHAR(MAX), age INT)
-	INSERT @t VALUES('a0', 20)
-	INSERT @t VALUES('a1', 10)
-	INSERT @t VALUES('a2', 30)
-	INSERT @t VALUES('a3', 50)
-	INSERT @t VALUES('a4', 40)
+begin
+	declare @t TABLE(name VARCHAR(MAX), age INT)
+	insert @t VALUES('a0', 20)
+	insert @t VALUES('a1', 10)
+	insert @t VALUES('a2', 30)
+	insert @t VALUES('a3', 50)
+	insert @t VALUES('a4', 40)
 
-	SELECT * FROM @t
+	select * from @t
 
-	SELECT *, ROW_NUMBER() OVER(ORDER BY age) AS [rank], COUNT(1) OVER() AS totalCount FROM @t
+	select *, row_number() over(order by age) as [rank], count(1) over() as totalCount from @t
 
-	DECLARE @curPage INT = 2 --当前页
-	DECLARE @pageCount INT = 3 --每页数量
-	SELECT * ,
-	CAST(CEILING(t.totalCount / CAST(@pageCount AS FLOAT)) AS INT) AS totalPage --总页数
+	declare @curPage INT = 2 --当前页
+	declare @pageCount INT = 3 --每页数量
+	select * ,
+	cast(CEILING(t.totalCount / cast(@pageCount as FLOAT)) AS INT) AS totalPage --总页数
 	--,CASE WHEN @curPage * @pageCount > t.totalCount THEN t.totalCount ELSE @curPage * @pageCount END AS test
-	FROM (
-		SELECT *, ROW_NUMBER() OVER(ORDER BY age) AS [rank], COUNT(1) OVER() AS totalCount --总条数
-		FROM @t
-	) AS t
-	WHERE t.[rank] BETWEEN ((@curPage - 1) * @pageCount + 1) AND
-		CASE WHEN @curPage * @pageCount > t.totalCount THEN t.totalCount ELSE @curPage * @pageCount END
-END
+	from (
+		select *, row_number() over(order by age) as [rank], count(1) over() as totalCount --总条数
+		from @t
+	) as t
+	where t.[rank] BETWEEN ((@curPage - 1) * @pageCount + 1) AND
+		case when @curPage * @pageCount > t.totalCount then t.totalCount else @curPage * @pageCount end
+end
 
 -----------定义数据表、不等于[x]条件的写法(ISNULL)
 begin
@@ -680,7 +680,7 @@ alter function [dbo].[f_split_GetDefect]
       @SourceSql NVARCHAR(MAX)
     )
 RETURNS table
-AS
+as
 
      return          select   ( select TOP 1
                     col
@@ -803,3 +803,96 @@ end
 --1	    	    2	    1
 --2	    1
 --3		        1
+
+--------------------查询ID是否在形如:('1,3,4,7~11')这样的范围的数据
+--1.先建一表值函数
+--函数说明：从字符串@c(其中各部分用@split分隔,如果某部分是范围,则此部分又由@split2分隔)中查找@target是否包含在其中
+--返回：1:表示在该范围内,0:表示不在该范围内
+--举例：[dbo].[contains2]('3~5,11,13~16,18', ',', '~', '5') 返回:1
+--举例：[dbo].[contains2]('3~5,11,13~16,18', ',', '~', '11') 返回:1
+--举例：[dbo].[contains2]('3~5,11,13~16,18', ',', '~', '17') 返回:0
+USE [MyTestDB] -- use DB
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+create function [dbo].[contains2](@c VARCHAR(MAX),@split VARCHAR(2),@split2 VARCHAR(2),@target VARCHAR(MAX))
+returns INT
+as
+	begin
+		declare @r INT = 0
+		declare @splitStr VARCHAR(MAX)
+		declare @min INT
+		declare @max INT
+		if CHARINDEX(@split2, @c) = 0 AND CHARINDEX(@target, @c) = 0
+			begin
+				set @r = 0
+				return @r
+			END
+		ELSE
+			begin
+				if @c = @target
+					begin
+						set @r = 1
+						return @r
+					END
+				ELSE
+					begin
+						while @c <> ''
+							begin
+								set @splitStr = SUBSTRING(@c, 1, case when CHARINDEX(@split, @c) = 0 THEN LEN(@c)
+									else CHARINDEX(@split, @c)- LEN(@split) end)
+								--SELECT @c AS [@c]
+								--SELECT @splitStr AS [@splitStr]
+								if @splitStr = @target
+									begin
+										set @r = 1
+										set @c = ''
+										return @r
+									END
+								ELSE if CHARINDEX(@split2, @splitStr) <> 0
+									begin
+										set @min = CAST(SUBSTRING(@splitStr, 1, CHARINDEX(@split2, @splitStr) - LEN(@split2)) AS INT)
+										set @max = CAST(SUBSTRING(@splitStr, CHARINDEX(@split2, @splitStr) + LEN(@split2), LEN(@splitStr)) AS INT)
+										--SELECT @min AS [@min]
+										--SELECT @max AS [@max]
+										if @min <= CAST(@target AS INT) AND @max >= CAST(@target AS INT)
+											begin
+												set @r = 1
+												set @c = ''
+												return @r
+											END
+										ELSE
+											begin
+												if CHARINDEX(@split,@c)<> 0
+													set @c = STUFF(@c,1,CHARINDEX(@split,@c),'')
+												ELSE
+													set @c = ''
+											END
+									END
+								ELSE
+									begin
+										if CHARINDEX(@split,@c)<> 0
+											set @c = STUFF(@c,1,CHARINDEX(@split,@c),'')
+										ELSE
+											set @c = ''
+									END
+							END
+					END
+			END
+		return @r
+	END
+GO
+--2.使用
+declare @v VARCHAR(MAX) = '21' --要查找的id
+
+declare @t TABLE(name VARCHAR(MAX), ids VARCHAR(MAX))
+insert @t VALUES('a0', '1,2,6~9')
+insert @t VALUES('a1', '3~5,11,13~16,18')
+insert @t VALUES('a2', '20~22,24,25,30')
+select * from @t AS t where [dbo].[contains2](t.ids, ',', '~', @v) = 1
+--result
+--name	ids
+--a2	20~22,24,25,30
