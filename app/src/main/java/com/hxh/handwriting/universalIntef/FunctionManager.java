@@ -2,7 +2,9 @@ package com.hxh.handwriting.universalIntef;
 
 import android.text.TextUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,10 +15,10 @@ public class FunctionManager {
 
     private static final FunctionManager INSTANCE = new FunctionManager();
 
-    private Map<String, FunctionNoParamNoResult> mNoParamNoResultMap = new HashMap<>();
-    private Map<String, FunctionNoParamHasResult> mNoParamHasResultMap = new HashMap<>();
-    private Map<String, FunctionHasParamNoResult> mHasParamNoResultMap = new HashMap<>();
-    private Map<String, FunctionHasParamHasResult> mHasParamHasResultMap = new HashMap<>();
+    private Map<String, List<FunctionNoParamNoResult>> mNoParamNoResultMap = new HashMap<>();
+    private Map<String, List<FunctionNoParamHasResult>> mNoParamHasResultMap = new HashMap<>();
+    private Map<String, List<FunctionHasParamNoResult>> mHasParamNoResultMap = new HashMap<>();
+    private Map<String, List<FunctionHasParamHasResult>> mHasParamHasResultMap = new HashMap<>();
 
     private FunctionManager() {
     }
@@ -31,28 +33,48 @@ public class FunctionManager {
      * 添加没有参数，有返回值的方法
      */
     public void addFunction(FunctionNoParamHasResult function) {
-        mNoParamHasResultMap.put(function.functionName, function);
+        List<FunctionNoParamHasResult> list = mNoParamHasResultMap.get(function.functionName);
+        if (list == null) {
+            list = new ArrayList<>();
+            mNoParamHasResultMap.put(function.functionName, list);
+        }
+        list.add(function);
     }
 
     /**
      * 添加没有参数，没有返回值的方法
      */
     public void addFunction(FunctionNoParamNoResult function) {
-        mNoParamNoResultMap.put(function.functionName, function);
+        List<FunctionNoParamNoResult> list = mNoParamNoResultMap.get(function.functionName);
+        if (list == null) {
+            list = new ArrayList<>();
+            mNoParamNoResultMap.put(function.functionName, list);
+        }
+        list.add(function);
     }
 
     /**
      * 添加有参数，没有返回值的方法
      */
     public void addFunction(FunctionHasParamNoResult function) {
-        mHasParamNoResultMap.put(function.functionName, function);
+        List<FunctionHasParamNoResult> list = mHasParamNoResultMap.get(function.functionName);
+        if (list == null) {
+            list = new ArrayList<>();
+            mHasParamNoResultMap.put(function.functionName, list);
+        }
+        list.add(function);
     }
 
     /**
      * 添加有参数，有返回值的方法
      */
     public void addFunction(FunctionHasParamHasResult function) {
-        mHasParamHasResultMap.put(function.functionName, function);
+        List<FunctionHasParamHasResult> list = mHasParamHasResultMap.get(function.functionName);
+        if (list == null) {
+            list = new ArrayList<>();
+            mHasParamHasResultMap.put(function.functionName, list);
+        }
+        list.add(function);
     }
 
     //执行没有参数，没有返回值的方法
@@ -60,12 +82,14 @@ public class FunctionManager {
         if (TextUtils.isEmpty(functionName)) {
             return;
         }
-        if (mNoParamNoResultMap != null) {
-            FunctionNoParamNoResult f = mNoParamNoResultMap.get(functionName);
-            if (f != null) {
-                f.function();
-            } else {
-                throw new FunctionNotFoundException("方法不存在");
+        List<FunctionNoParamNoResult> list = mNoParamNoResultMap.get(functionName);
+        if (list != null) {
+            for (FunctionNoParamNoResult f : list) {
+                if (f != null) {
+                    f.function();
+                } else {
+                    throw new FunctionNotFoundException("方法不存在");
+                }
             }
         }
     }
@@ -75,16 +99,23 @@ public class FunctionManager {
         if (TextUtils.isEmpty(functionName)) {
             return null;
         }
-        if (mNoParamHasResultMap != null) {
-            FunctionNoParamHasResult f = mNoParamHasResultMap.get(functionName);
-            if (f != null) {
-                //cast就是转换
-                return t.cast(f.function());
-            } else {
-                throw new FunctionNotFoundException("方法不存在");
+        List<FunctionNoParamHasResult> list = mNoParamHasResultMap.get(functionName);
+        T result = null;
+        if (list != null) {
+            for (FunctionNoParamHasResult f : list) {
+                if (f != null) {
+                    if (result == null) {
+                        //cast就是转换
+                        result = t.cast(f.function());
+                    } else {
+                        f.function();
+                    }
+                } else {
+                    throw new FunctionNotFoundException("方法不存在");
+                }
             }
         }
-        return null;
+        return result;
     }
 
     //执行有参数，没有返回值的方法
@@ -93,12 +124,14 @@ public class FunctionManager {
         if (TextUtils.isEmpty(functionName)) {
             return;
         }
-        if (mHasParamNoResultMap != null) {
-            FunctionHasParamNoResult f = mHasParamNoResultMap.get(functionName);
-            if (f != null) {
-                f.function(p);
-            } else {
-                throw new FunctionNotFoundException("方法不存在");
+        List<FunctionHasParamNoResult> list = mHasParamNoResultMap.get(functionName);
+        if (list != null) {
+            for (FunctionHasParamNoResult f : list) {
+                if (f != null) {
+                    f.function(p);
+                } else {
+                    throw new FunctionNotFoundException("方法不存在");
+                }
             }
         }
     }
@@ -109,44 +142,92 @@ public class FunctionManager {
         if (TextUtils.isEmpty(functionName)) {
             return null;
         }
-        if (mHasParamHasResultMap != null) {
-            FunctionHasParamHasResult f = mHasParamHasResultMap.get(functionName);
-            if (f != null) {
-                return t.cast(f.function(p));
-            } else {
-                throw new FunctionNotFoundException("方法不存在");
+        List<FunctionHasParamHasResult> list = mHasParamHasResultMap.get(functionName);
+        R result = null;
+        if (list != null) {
+            for (FunctionHasParamHasResult f : list) {
+                if (f != null) {
+                    if (result == null) {
+                        //cast就是转换
+                        result = t.cast(f.function(p));
+                    } else {
+                        f.function(p);
+                    }
+                } else {
+                    throw new FunctionNotFoundException("方法不存在");
+                }
             }
         }
-        return null;
+        return result;
     }
 
     //将四种类型的方法移除从FunctionManager;
 
     /**
-     * 添加没有参数，有返回值的方法
+     * 移除没有参数，有返回值的方法
      */
     public void removeFunction(FunctionNoParamHasResult function) {
-        mNoParamHasResultMap.remove(function.functionName);
+        List<FunctionNoParamHasResult> list = mNoParamHasResultMap.get(function.functionName);
+        if (list != null) {
+            for (FunctionNoParamHasResult f : list) {
+                if (function == f) {
+                    list.remove(f);
+                }
+            }
+            if (list.isEmpty()) {
+                mNoParamHasResultMap.remove(function.functionName);
+            }
+        }
     }
 
     /**
-     * 添加没有参数，没有返回值的方法
+     * 移除没有参数，没有返回值的方法
      */
     public void removeFunction(FunctionNoParamNoResult function) {
-        mNoParamNoResultMap.remove(function.functionName);
+        List<FunctionNoParamNoResult> list = mNoParamNoResultMap.get(function.functionName);
+        if (list != null) {
+            for (FunctionNoParamNoResult f : list) {
+                if (function == f) {
+                    list.remove(f);
+                }
+            }
+            if (list.isEmpty()) {
+                mNoParamNoResultMap.remove(function.functionName);
+            }
+        }
     }
 
     /**
-     * 添加有参数，没有返回值的方法
+     * 移除有参数，没有返回值的方法
      */
     public void removeFunction(FunctionHasParamNoResult function) {
-        mHasParamNoResultMap.remove(function.functionName);
+        List<FunctionHasParamNoResult> list = mHasParamNoResultMap.get(function.functionName);
+        if (list != null) {
+            for (FunctionHasParamNoResult f : list) {
+                if (function == f) {
+                    list.remove(f);
+                }
+            }
+            if (list.isEmpty()) {
+                mHasParamNoResultMap.remove(function.functionName);
+            }
+        }
     }
 
     /**
-     * 添加有参数，有返回值的方法
+     * 移除有参数，有返回值的方法
      */
     public void removeFunction(FunctionHasParamHasResult function) {
-        mHasParamHasResultMap.remove(function.functionName);
+        List<FunctionHasParamHasResult> list = mHasParamHasResultMap.get(function.functionName);
+        if (list != null) {
+            for (FunctionHasParamHasResult f : list) {
+                if (function == f) {
+                    list.remove(f);
+                }
+            }
+            if (list.isEmpty()) {
+                mHasParamHasResultMap.remove(function.functionName);
+            }
+        }
     }
 }
