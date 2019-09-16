@@ -27,12 +27,13 @@ public class FunctionManager {
         return INSTANCE;
     }
 
-    //将四种类型的方法添加到FunctionManager;
-
+    ///////////////////////////////////////////////////////////////////////////
+    // 将四种类型的方法添加到FunctionManager;
+    ///////////////////////////////////////////////////////////////////////////
     /**
      * 添加没有参数，有返回值的方法
      */
-    public void addFunction(FunctionNoParamHasResult function) {
+    public synchronized void addFunction(FunctionNoParamHasResult function) {
         List<FunctionNoParamHasResult> list = mNoParamHasResultMap.get(function.functionName);
         if (list == null) {
             list = new ArrayList<>();
@@ -44,7 +45,7 @@ public class FunctionManager {
     /**
      * 添加没有参数，没有返回值的方法
      */
-    public void addFunction(FunctionNoParamNoResult function) {
+    public synchronized void addFunction(FunctionNoParamNoResult function) {
         List<FunctionNoParamNoResult> list = mNoParamNoResultMap.get(function.functionName);
         if (list == null) {
             list = new ArrayList<>();
@@ -56,7 +57,7 @@ public class FunctionManager {
     /**
      * 添加有参数，没有返回值的方法
      */
-    public void addFunction(FunctionHasParamNoResult function) {
+    public synchronized void addFunction(FunctionHasParamNoResult function) {
         List<FunctionHasParamNoResult> list = mHasParamNoResultMap.get(function.functionName);
         if (list == null) {
             list = new ArrayList<>();
@@ -68,7 +69,7 @@ public class FunctionManager {
     /**
      * 添加有参数，有返回值的方法
      */
-    public void addFunction(FunctionHasParamHasResult function) {
+    public synchronized void addFunction(FunctionHasParamHasResult function) {
         List<FunctionHasParamHasResult> list = mHasParamHasResultMap.get(function.functionName);
         if (list == null) {
             list = new ArrayList<>();
@@ -94,6 +95,9 @@ public class FunctionManager {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 四种类型方法的执行
+    ///////////////////////////////////////////////////////////////////////////
     //执行没有参数，有返回值的方法
     public <T> T invokeFunction(String functionName, Class<T> t) {
         if (TextUtils.isEmpty(functionName)) {
@@ -161,17 +165,19 @@ public class FunctionManager {
         return result;
     }
 
-    //将四种类型的方法移除从FunctionManager;
-
+    ///////////////////////////////////////////////////////////////////////////
+    // 将四种类型的方法移除从FunctionManager
+    ///////////////////////////////////////////////////////////////////////////
     /**
      * 移除没有参数，有返回值的方法
      */
-    public void removeFunction(FunctionNoParamHasResult function) {
+    public synchronized void removeFunction(FunctionNoParamHasResult function) {
         List<FunctionNoParamHasResult> list = mNoParamHasResultMap.get(function.functionName);
         if (list != null) {
-            for (FunctionNoParamHasResult f : list) {
-                if (function == f) {
-                    list.remove(f);
+            for (int i = 0; i < list.size(); i++) {
+                if (function == list.get(i)) {
+                    list.remove(i);
+                    i--;
                 }
             }
             if (list.isEmpty()) {
@@ -183,12 +189,13 @@ public class FunctionManager {
     /**
      * 移除没有参数，没有返回值的方法
      */
-    public void removeFunction(FunctionNoParamNoResult function) {
+    public synchronized void removeFunction(FunctionNoParamNoResult function) {
         List<FunctionNoParamNoResult> list = mNoParamNoResultMap.get(function.functionName);
         if (list != null) {
-            for (FunctionNoParamNoResult f : list) {
-                if (function == f) {
-                    list.remove(f);
+            for (int i = 0; i < list.size(); i++) {
+                if (function == list.get(i)) {
+                    list.remove(i);
+                    i--;
                 }
             }
             if (list.isEmpty()) {
@@ -200,12 +207,13 @@ public class FunctionManager {
     /**
      * 移除有参数，没有返回值的方法
      */
-    public void removeFunction(FunctionHasParamNoResult function) {
+    public synchronized void removeFunction(FunctionHasParamNoResult function) {
         List<FunctionHasParamNoResult> list = mHasParamNoResultMap.get(function.functionName);
         if (list != null) {
-            for (FunctionHasParamNoResult f : list) {
-                if (function == f) {
-                    list.remove(f);
+            for (int i = 0; i < list.size(); i++) {
+                if (function == list.get(i)) {
+                    list.remove(i);
+                    i--;
                 }
             }
             if (list.isEmpty()) {
@@ -217,12 +225,13 @@ public class FunctionManager {
     /**
      * 移除有参数，有返回值的方法
      */
-    public void removeFunction(FunctionHasParamHasResult function) {
+    public synchronized void removeFunction(FunctionHasParamHasResult function) {
         List<FunctionHasParamHasResult> list = mHasParamHasResultMap.get(function.functionName);
         if (list != null) {
-            for (FunctionHasParamHasResult f : list) {
-                if (function == f) {
-                    list.remove(f);
+            for (int i = 0; i < list.size(); i++) {
+                if (function == list.get(i)) {
+                    list.remove(i);
+                    i--;
                 }
             }
             if (list.isEmpty()) {
